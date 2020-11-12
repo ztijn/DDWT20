@@ -144,6 +144,5 @@ function count_series($pdo){
     $stmt = $pdo->prepare('SELECT * FROM series');
     $stmt->execute();
     $seriescount = $stmt->rowCount();
-    echo $seriescount;
     return $seriescount;
 }
