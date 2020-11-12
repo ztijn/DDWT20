@@ -194,7 +194,7 @@ function get_serie_table($series){
             '
 <tr>
 <th scope="row">'.$value['name'].'</th>
-<td><a href=“/DDWT20/week1/serie/?serie_id='.$value['id'].'" role="button" class="btn btn-primary">More info</a></td>
+<td><a href="/DDWT20/week1/serie/?serie_id='.$value['id'].'" role="button" class="btn btn-primary">More info</a></td>
 </tr>
 ';
     }
