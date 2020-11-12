@@ -8,6 +8,12 @@
 
 include 'model.php';
 
+/* connects to the database */
+$db = connect_db('localhost', 'ddwt20_week1', 'ddwt20', 'ddwt20');
+
+/* counts amount of series in the database */
+$seriescount = count_series($db);
+
 /* Landing page */
 if (new_route('/DDWT20/week1/', 'get')) {
     /* Page info */

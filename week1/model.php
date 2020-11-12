@@ -118,3 +118,32 @@ function get_error($feedback){
         </div>';
     return $error_exp;
 }
+
+/**
+ * connects to a database
+ */
+function connect_db($host, $database, $username, $password){
+    $charset = 'utf8mb4';
+    $dns = "mysql:host=$host;dbname=$database;charset=$charset";
+    $options = [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    ];
+    try{
+        $pdo = new PDO($dns, $username, $password, $options);
+    } catch(\PDOException $e){
+        echo sprintf("Failed to connect. %s",$e->getMessage());
+    }
+    return $pdo;
+}
+
+/**
+ * counts the amount of series in the database
+ */
+function count_series($pdo){
+    $stmt = $pdo->prepare('SELECT * FROM series');
+    $stmt->execute();
+    $seriescount = $stmt->rowCount();
+    echo $seriescount;
+    return $seriescount;
+}
