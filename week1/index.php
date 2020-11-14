@@ -199,12 +199,25 @@ elseif (new_route('/DDWT20/week1/edit/', 'get')) {
 
 /* Edit serie POST */
 elseif (new_route('/DDWT20/week1/edit/', 'post')) {
+    $feedback = update_series($_POST, $db);
+    if ($feedback['type'] = 'danger'){
+        echo get_error($feedback);
+    }
+    elseif ($feedback['type'] = 'success'){
+        echo $feedback['message'];
+    }
 
-    /* Get serie info from db */
-    $serie_name = 'House of Cards';
-    $serie_abstract = 'A Congressman works with his equally conniving wife to exact revenge on the people who betrayed him.';
-    $nbr_seasons = '6';
-    $creators = 'Beau Willimon';
+    /* catch serie id */
+    $serie_id = $_POST['id'];
+
+    /* get serie info from database */
+    $serie_info = get_series_info($db, $serie_id);
+
+    /* Get series from db */
+    $serie_name = $serie_info['name'];
+    $serie_abstract = $serie_info['abstract'];
+    $nbr_seasons = $serie_info['seasons'];
+    $creators = $serie_info['creator'];
 
     /* Page info */
     $page_title = $serie_info['name'];

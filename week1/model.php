@@ -318,3 +318,65 @@ function add_series($serie_info, $pdo){
         }
     }
 }
+
+/**
+ * checks is serie already exists, other than the serie it is trying to edit
+ * @param $serie_info
+ * @param $pdo
+ * @return array|bool
+ */
+function already_exists_edit($serie_info, $pdo){
+    $stmt = $pdo->prepare('SELECT * FROM series WHERE name = ? AND id != ?');
+    $stmt->execute([$serie_info['Name'], $serie_info['id']]);
+    $serie = $stmt->rowCount();
+    if ($serie){
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. This series/name was already added.'
+        ];
+    }
+    else {
+        return False;
+    }
+}
+
+/**
+ * update a serie in the database
+ * @param $serie_info
+ * @param $pdo
+ * @return array|bool
+ */
+function update_series($serie_info, $pdo){
+    if (seasons_numeric($serie_info)){
+        return seasons_numeric($serie_info);
+    }
+    elseif (is_empty($serie_info)){
+        return is_empty($serie_info);
+}
+    elseif (already_exists_edit($serie_info, $pdo)){
+        return already_exists_edit($serie_info, $pdo);
+    }
+    else {
+        $stmt = $pdo->prepare("UPDATE series SET name = ?, creator = ?, seasons = ?, abstract = ? WHERE id = ?");
+        $stmt->execute([
+            $serie_info['Name'],
+            $serie_info['Creator'],
+            $serie_info['Seasons'],
+            $serie_info['Abstract'],
+            $serie_info['id']
+        ]);
+        $inserted = $stmt->rowCount();
+        if ($inserted == 1) {
+            return [
+                'type' => 'success',
+                'message' => sprintf("Series '%s' has been updated.", $serie_info['Name'])
+            ];
+        }
+        else {
+            return [
+                'type' => 'danger',
+                'message' => 'There was an error. The series was not updated. Try it again.'
+            ];
+        }
+    }
+}
