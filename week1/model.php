@@ -205,3 +205,15 @@ function get_serie_table($series){
 ';
     return $table_exp;
 }
+
+function get_series_info($pdo, $serie_id){
+    $stmt = $pdo->prepare('SELECT * FROM series WHERE id = ?');
+    $stmt->execute([$serie_id]);
+    $series = $stmt->fetch();
+    $series_exp = Array();
+    /* Create array with htmlspecialchars */
+    foreach ($series as $key => $value){
+        $series_exp[$key] = htmlspecialchars($value);
+    }
+    return $series_exp;
+}

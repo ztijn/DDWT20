@@ -33,7 +33,43 @@
                     <h1><?= $page_title ?></h1>
                     <h5><?= $page_subtitle ?></h5>
                     <p><?= $page_content ?></p>
+
                     <!-- Put your form here -->
+                    <form action=<?= $form_action ?> method="post">
+                        <div class="form-group row">
+                            <label for="inputName" class="col-sm-2 col-formlabel">Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="inputName"
+                                       name="name" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputCreators" class="col-sm-2 col-formlabel">Creators</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="inputCreators"
+                                       name="creator" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputSeasons" class="col-sm-2 col-formlabel">Seasons</label>
+                            <div class="col-sm-10">
+                                <input type="number" class="form-control" id="inputSeasons"
+                                       name="seasons" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputAbstract" class="col-sm-2 col-formlabel">Abstract</label>
+                            <div class="col-sm-10">
+                                <textarea class="form-control" id="inputAbstract" rows="3" name="abstract" required></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-10">
+                                <button type="submit" class="btn btn-primary"><?=
+                                    $submit_btn ?></button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
 
                 <!-- Right column -->
