@@ -238,7 +238,7 @@ elseif (new_route('/DDWT20/week1/remove/', 'post')) {
     /* Remove serie in database */
     $serie_id = $_POST['serie_id'];
     $feedback = remove_serie($db, $serie_id);
-    $error_msg = get_error($feedback);
+    echo get_error($feedback);
 
     /* Page info */
     $page_title = 'Overview';

@@ -365,8 +365,8 @@ function update_series($serie_info, $pdo){
             $serie_info['Abstract'],
             $serie_info['id']
         ]);
-        $inserted = $stmt->rowCount();
-        if ($inserted == 1) {
+        $updated = $stmt->rowCount();
+        if ($updated == 1) {
             return [
                 'type' => 'success',
                 'message' => sprintf("Series '%s' has been updated.", $serie_info['Name'])
@@ -378,5 +378,23 @@ function update_series($serie_info, $pdo){
                 'message' => 'There was an error. The series was not updated. Try it again.'
             ];
         }
+    }
+}
+
+function remove_serie($pdo, $serie_id){
+    $stmt = $pdo->prepare("DELETE FROM series WHERE id = ?");
+    $stmt->execute([$serie_id]);
+    $deleted = $stmt->rowCount();
+    if ($deleted == 1) {
+        return [
+            'type' => 'success',
+            'message' => 'Series has been removed.'
+        ];
+    }
+    else {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. The series was not removed. Try it again.'
+        ];
     }
 }
