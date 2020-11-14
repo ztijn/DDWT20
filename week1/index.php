@@ -149,12 +149,8 @@ elseif (new_route('/DDWT20/week1/add/', 'post')) {
     $form_action = '/DDWT20/week1/add/';
 
     $feedback = add_series($_POST, $db);
-    if ($feedback['type'] = 'danger'){
-        echo get_error($feedback);
-    }
-    elseif ($feedback['type'] = 'success'){
-        echo $feedback['message'];
-    }
+    echo get_error($feedback);
+
 
     include use_template('new');
 }
@@ -200,12 +196,7 @@ elseif (new_route('/DDWT20/week1/edit/', 'get')) {
 /* Edit serie POST */
 elseif (new_route('/DDWT20/week1/edit/', 'post')) {
     $feedback = update_series($_POST, $db);
-    if ($feedback['type'] = 'danger'){
-        echo get_error($feedback);
-    }
-    elseif ($feedback['type'] = 'success'){
-        echo $feedback['message'];
-    }
+    echo get_error($feedback);
 
     /* catch serie id */
     $serie_id = $_POST['id'];
