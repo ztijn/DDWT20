@@ -40,27 +40,27 @@
                             <label for="inputName" class="col-sm-2 col-formlabel">Name</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" id="inputName"
-                                       name="name" required>
+                                       name="Name" required>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="inputCreators" class="col-sm-2 col-formlabel">Creators</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" id="inputCreators"
-                                       name="creator" required>
+                                       name="Creator" required>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="inputSeasons" class="col-sm-2 col-formlabel">Seasons</label>
                             <div class="col-sm-10">
                                 <input type="number" class="form-control" id="inputSeasons"
-                                       name="seasons" required>
+                                       name="Seasons" required>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="inputAbstract" class="col-sm-2 col-formlabel">Abstract</label>
                             <div class="col-sm-10">
-                                <textarea class="form-control" id="inputAbstract" rows="3" name="abstract" required></textarea>
+                                <textarea class="form-control" id="inputAbstract" rows="3" name="Abstract" required></textarea>
                             </div>
                         </div>
                         <div class="form-group row">

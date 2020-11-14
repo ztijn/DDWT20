@@ -1,8 +1,8 @@
 <?php
 /**
  * Controller
- * User: reinardvandalen
- * Date: 05-11-18
+ * User: Stijn Wijnen
+ * Date: 14-11-2020
  * Time: 15:25
  */
 
@@ -147,6 +147,14 @@ elseif (new_route('/DDWT20/week1/add/', 'post')) {
     $page_content = 'Fill in the details of you favorite series.';
     $submit_btn = "Add Series";
     $form_action = '/DDWT20/week1/add/';
+
+    $feedback = add_series($_POST, $db);
+    if ($feedback['type'] = 'danger'){
+        echo get_error($feedback);
+    }
+    elseif ($feedback['type'] = 'success'){
+        echo $feedback['message'];
+    }
 
     include use_template('new');
 }

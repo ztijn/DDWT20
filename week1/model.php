@@ -206,6 +206,12 @@ function get_serie_table($series){
     return $table_exp;
 }
 
+/**
+ * get info from singe serie
+ * @param $pdo
+ * @param $serie_id
+ * @return array
+ */
 function get_series_info($pdo, $serie_id){
     $stmt = $pdo->prepare('SELECT * FROM series WHERE id = ?');
     $stmt->execute([$serie_id]);
@@ -216,4 +222,99 @@ function get_series_info($pdo, $serie_id){
         $series_exp[$key] = htmlspecialchars($value);
     }
     return $series_exp;
+}
+
+/**
+ * Check data type
+ * @param $serie_info
+ * @return array|bool
+ */
+function seasons_numeric($serie_info){
+    if (!is_numeric($serie_info['Seasons'])) {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. You should enter a number in the field Seasons.'
+        ];
+    }
+    else {
+        return False;
+    }
+}
+
+/**
+ * Check if all fields are set
+ * @param $serie_info
+ * @return array|bool
+ */
+function is_empty($serie_info){
+    if (
+        empty($serie_info['Name']) or
+        empty($serie_info['Creator']) or
+        empty($serie_info['Seasons']) or
+        empty($serie_info['Abstract'])
+    ) {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. Not all fields were filled in.'
+        ];
+    }
+    else {
+        return False;
+    }
+}
+
+/**
+ * Check if serie already exists
+ * @param $serie_info
+ * @param $pdo
+ * @return array|bool
+ */
+function already_exists($serie_info, $pdo){
+    $stmt = $pdo->prepare('SELECT * FROM series WHERE name = ?');
+    $stmt->execute([$serie_info['Name']]);
+    $serie = $stmt->rowCount();
+    if ($serie){
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. This series was already added.'
+        ];
+    }
+    else {
+        return False;
+    }
+}
+
+
+function add_series($serie_info, $pdo){
+    if (seasons_numeric($serie_info)){
+        return seasons_numeric($serie_info);
+    }
+    elseif (is_empty($serie_info)){
+        return is_empty($serie_info);
+    }
+    elseif (already_exists($serie_info, $pdo)){
+        return already_exists($serie_info, $pdo);
+    }
+    else {
+        $stmt = $pdo->prepare("INSERT INTO series (name, creator, seasons, abstract) VALUES (?, ?, ?, ?)");
+        $stmt->execute([
+            $serie_info['Name'],
+            $serie_info['Creator'],
+            $serie_info['Seasons'],
+            $serie_info['Abstract']
+        ]);
+        $inserted = $stmt->rowCount();
+        if ($inserted == 1) {
+            return [
+                'type' => 'success',
+                'message' => sprintf("Series '%s' added to Series Overview.", $serie_info['Name'])
+            ];
+        }
+        else {
+            return [
+                'type' => 'danger',
+                'message' => 'There was an error. The series was not added. Try it again.'
+            ];
+        }
+    }
 }
