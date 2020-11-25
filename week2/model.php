@@ -97,7 +97,7 @@ function get_breadcrumbs($breadcrumbs) {
  * @param array $navigation Array with as Key the page name and as Value the corresponding url
  * @return string html code that represents the navigation
  */
-function get_navigation($navigation){
+function get_navigation($template, $active_id){
     $navigation_exp = '
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand">Series Overview</a>
@@ -106,13 +106,13 @@ function get_navigation($navigation){
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">';
-    foreach ($navigation as $name => $info) {
-        if ($info[1]){
+    foreach ($template as $id => $info) {
+        if ($id == $active_id){
             $navigation_exp .= '<li class="nav-item active">';
-            $navigation_exp .= '<a class="nav-link" href="'.$info[0].'">'.$name.'</a>';
+            $navigation_exp .= '<a class="nav-link" href="'.$info['url'].'">'.$info['name'].'</a>';
         }else{
             $navigation_exp .= '<li class="nav-item">';
-            $navigation_exp .= '<a class="nav-link" href="'.$info[0].'">'.$name.'</a>';
+            $navigation_exp .= '<a class="nav-link" href="'.$info['url'].'">'.$info['name'].'</a>';
         }
 
         $navigation_exp .= '</li>';
@@ -129,13 +129,13 @@ function get_navigation($navigation){
  * @param array $series with series from the db
  * @return string
  */
-function get_serie_table($series){
+function get_serie_table($series, $pdo){
     $table_exp = '
     <table class="table table-hover">
     <thead
     <tr>
         <th scope="col">Series</th>
-        <th scope="col"></th>
+        <th scope="col">User</th>
     </tr>
     </thead>
     <tbody>';
@@ -143,6 +143,7 @@ function get_serie_table($series){
         $table_exp .= '
         <tr>
             <th scope="row">'.$value['name'].'</th>
+            <th scope="row">'.user_name($pdo, $value['user']).'</th>
             <td><a href="/DDWT20/week2/serie/?serie_id='.$value['id'].'" role="button" class="btn btn-primary">More info</a></td>
         </tr>
         ';
@@ -209,6 +210,7 @@ function get_serieinfo($pdo, $serie_id){
  * @return string
  */
 function get_error($feedback){
+    $feedback = json_decode($feedback, True);
     $error_exp = '
         <div class="alert alert-'.$feedback['type'].'" role="alert">
             '.$feedback['message'].'
@@ -390,6 +392,19 @@ function count_series($pdo){
 }
 
 /**
+ * count the number of active users
+ * @param $pdo
+ * @return mixed
+ */
+function count_users($pdo){
+    /* Get series */
+    $stmt = $pdo->prepare('SELECT * FROM users');
+    $stmt->execute();
+    $users = $stmt->rowCount();
+    return $users;
+}
+
+/**
  * Changes the HTTP Header to a given location
  * @param string $location location to be redirected to
  */
@@ -409,4 +424,17 @@ function get_user_id(){
     } else {
         return False;
     }
+}
+
+/**
+ * return first and last name for a given id
+ * @param $pdo
+ * @param $user_id
+ * @return string
+ */
+function user_name($pdo, $user_id){
+    $stmt = $pdo->prepare('SELECT * FROM users WHERE id = ?');
+    $stmt->execute([$user_id]);
+    $user = $stmt->fetch();
+    return "{$user['firstname']} {$user['lastname']}";
 }
