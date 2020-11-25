@@ -237,6 +237,7 @@ elseif (new_route('/DDWT20/week2/myaccount/', 'get')) {
     /* Page content */
     $page_subtitle = 'Here you can see the details of your account.';
     $user = get_username($db, $_SESSION['user_id']);
+    $page_content = 'Missing functionality. In the future you can see and edit your profile details.';
 
     /* Get error msg from POST route */
     if ( isset($_GET['error_msg']) ) {
