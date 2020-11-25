@@ -37,6 +37,10 @@ $nav_template = Array(
     5 => Array(
         'name' => 'Register',
         'url' => '/DDWT20/week2/register/'
+    ),
+    6 => Array(
+        'name' => 'Login',
+        'url' => '/DDWT20/week2/login/'
     ));
 
 /* Landing page */
@@ -54,6 +58,9 @@ if (new_route('/DDWT20/week2/', 'get')) {
     $page_subtitle = 'The online platform to list your favorite series';
     $page_content = 'On Series Overview you can list your favorite series. You can see the favorite series of all Series Overview users. By sharing your favorite series, you can get inspired by others and explore new series.';
 
+    if ( isset($_GET['error_msg']) ) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
     /* Choose Template */
     include use_template('main');
 }
@@ -102,6 +109,15 @@ elseif (new_route('/DDWT20/week2/serie/', 'get')) {
     $page_content = $serie_info['abstract'];
     $nbr_seasons = $serie_info['seasons'];
     $creators = $serie_info['creator'];
+    $added_by = get_username($db, $serie_info['user']);
+
+    /* Checks if current user made the entry for this serie */
+
+    if (check_login()){
+        if (user_id() == $serie_info['user']){
+            $display_buttons = True;
+        }
+    }
 
     if ( isset($_GET['error_msg']) ) {
         $error_msg = get_error($_GET['error_msg']);
@@ -112,6 +128,9 @@ elseif (new_route('/DDWT20/week2/serie/', 'get')) {
 
 /* Add serie GET */
 elseif (new_route('/DDWT20/week2/add/', 'get')) {
+    if (check_login() == False){
+        redirect('/DDWT20/week2/login/');
+    }
     /* Page info */
     $page_title = 'Add Series';
     $breadcrumbs = get_breadcrumbs([
@@ -138,6 +157,9 @@ elseif (new_route('/DDWT20/week2/add/', 'get')) {
 
 /* Add serie POST */
 elseif (new_route('/DDWT20/week2/add/', 'post')) {
+    if (check_login() == False){
+        redirect('/DDWT20/week2/login/');
+    }
     /* Add serie to database */
     $feedback = add_serie($db, $_POST);
     /* Redirect to serie GET route */
@@ -147,6 +169,9 @@ elseif (new_route('/DDWT20/week2/add/', 'post')) {
 
 /* Edit serie GET */
 elseif (new_route('/DDWT20/week2/edit/', 'get')) {
+    if (check_login() == False){
+        redirect('/DDWT20/week2/login/');
+    }
     /* Get serie info from db */
     $serie_id = $_GET['serie_id'];
     $serie_info = get_serieinfo($db, $serie_id);
@@ -172,6 +197,9 @@ elseif (new_route('/DDWT20/week2/edit/', 'get')) {
 
 /* Edit serie POST */
 elseif (new_route('/DDWT20/week2/edit/', 'post')) {
+    if (check_login() == False){
+        redirect('/DDWT20/week2/login/');
+    }
     /* Update serie in database */
     $feedback = update_serie($db, $_POST);
     /* Redirect to serie GET route */
@@ -181,6 +209,9 @@ elseif (new_route('/DDWT20/week2/edit/', 'post')) {
 
 /* Remove serie */
 elseif (new_route('/DDWT20/week2/remove/', 'post')) {
+    if (check_login() == False){
+        redirect('/DDWT20/week2/login/');
+    }
     /* Remove serie in database */
     $serie_id = $_POST['serie_id'];
     $feedback = remove_serie($db, $serie_id);
@@ -188,6 +219,120 @@ elseif (new_route('/DDWT20/week2/remove/', 'post')) {
     redirect(sprintf('/DDWT20/week2/overview/?error_msg=%s',
         json_encode($feedback)));
 }
+
+/* My account */
+elseif (new_route('/DDWT20/week2/myaccount/', 'get')) {
+    if (check_login() == False){
+        redirect('/DDWT20/week2/login/');
+    }
+    /* Page info */
+    $page_title = 'My Account';
+    $breadcrumbs = get_breadcrumbs([
+        'DDWT20' => na('/DDWT20/', False),
+        'Week 2' => na('/DDWT20/week2/', False),
+        'My Account' => na('/DDWT20/week2/myaccount/', True)
+    ]);
+    $navigation = get_navigation($nav_template, 4);
+
+    /* Page content */
+    $page_subtitle = 'Here you can see the details of your account.';
+    $user = get_username($db, $_SESSION['user_id']);
+
+    /* Get error msg from POST route */
+    if ( isset($_GET['error_msg']) ) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
+
+    include use_template('account');
+}
+
+
+/* Register GET */
+elseif (new_route('/DDWT20/week2/register/', 'get')) {
+    if (check_login() == True){
+        redirect('/DDWT20/week2/myaccount/');
+    }
+    /* Page info */
+    $page_title = 'Register';
+    $breadcrumbs = get_breadcrumbs([
+        'DDWT20' => na('/DDWT20/', False),
+        'Week 2' => na('/DDWT20/week2/', False),
+        'Register' => na('/DDWT20/week2/register/', True)
+    ]);
+    $navigation = get_navigation($nav_template, 5);
+
+    /* Page content */
+    $page_subtitle = 'Register below to add and edit your own series';
+
+    /* Get error msg from POST route */
+    if ( isset($_GET['error_msg']) ) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
+
+    include use_template('register');
+}
+
+
+/* Register POST */
+elseif (new_route('/DDWT20/week2/register/', 'post')) {
+    /* Register user */
+    $error_msg = register_user($db, $_POST);
+    /* Redirect to homepage */
+    redirect(sprintf('/DDWT20/week2/register/?error_msg=%s',
+        json_encode($error_msg)));
+
+}
+
+
+/* Login GET */
+elseif (new_route('/DDWT20/week2/login/', 'get')) {
+    if (check_login() == True){
+        redirect('/DDWT20/week2/myaccount/');
+    }
+    /* Page info */
+    $page_title = 'Login';
+    $breadcrumbs = get_breadcrumbs([
+        'DDWT20' => na('/DDWT20/', False),
+        'Week 2' => na('/DDWT20/week2/', False),
+        'Login' => na('/DDWT20/week2/login/', True)
+    ]);
+    $navigation = get_navigation($nav_template, 6);
+
+    /* Page content */
+    $page_subtitle = 'Use your username and password to login';
+
+    /* Get error msg from POST route */
+    if ( isset($_GET['error_msg']) ) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
+
+    include use_template('login');
+}
+
+
+/* Login POST */
+elseif (new_route('/DDWT20/week2/login/', 'post')) {
+    /* Login user */
+    $feedback = login_user($db, $_POST);
+    /* Redirect to homepage */
+    redirect(sprintf('/DDWT20/week2/login/?error_msg=%s',
+        json_encode($feedback)));
+}
+
+
+/* Logout GET */
+elseif (new_route('/DDWT20/week2/logout/', 'get')) {
+    if (check_login() == False){
+        redirect('/DDWT20/week2/login/');
+    }
+    /* logout user */
+    $error_msg = logout_user();
+    /* Redirect to homepage */
+    redirect(sprintf('/DDWT20/week2/?error_msg=%s',
+        json_encode($error_msg)));
+
+}
+
 
 else {
     http_response_code(404);
