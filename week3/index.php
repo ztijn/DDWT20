@@ -15,8 +15,26 @@ include 'model.php';
 /* Connect to DB */
 $db = connect_db('localhost', 'ddwt20_week3', 'ddwt20', 'ddwt20');
 
+/* set credentials */
+$username = 'ddwt20';
+$password = 'ddwt20';
+$cred = set_cred($username, $password);
+
 /* Create Router instance */
 $router = new \Bramus\Router\Router();
+
+// check credential before every operation
+$router->before('GET|POST|PUT|DELETE', '/api/.*', function() use($cred) {
+    if (!check_cred($cred)){
+        $feedback = [
+            'type' => 'danger',
+            'message' => 'Authentication failed. Please check the credentials.'
+        ];
+        echo json_encode($feedback);
+        exit();
+    }
+});
+
 
 // Add routes here
 $router->mount('/api', function() use ($router, $db) {
@@ -63,9 +81,14 @@ $router->mount('/api', function() use ($router, $db) {
 
 });
 
+// if no path was found output feedback
 $router->set404(function() {
     header('HTTP/1.1 404 Not Found');
-    echo "The path you entered was not found. Errorcode: 404";
+    $feedback = [
+        'type'=> 'warning',
+        'message'=> "The path you entered was not found. Errorcode: 404"
+    ];
+    echo json_encode($feedback);
 });
 
 /* Run the router */
