@@ -178,7 +178,7 @@ function update_serie($pdo, $serie_info){
     $stmt = $pdo->prepare('SELECT * FROM series WHERE name = ?');
     $stmt->execute([$serie_info['Name']]);
     $serie = $stmt->fetch();
-    if ($serie_info['Name'] == $serie['name'] and $serie['name'] != $current_name){
+    if ($serie and $serie_info['Name'] == $serie['name'] and $serie['name'] != $current_name){
         return [
             'type' => 'danger',
             'message' => sprintf("The name of the series cannot be changed. %s already exists.", $serie_info['Name'])
@@ -257,4 +257,11 @@ function count_series($pdo){
 function redirect($location){
     header(sprintf('Location: %s', $location));
     die();
+}
+
+/**
+ * @param $content_type
+ */
+function http_content_type($content_type){
+    header(sprintf('Content-Type: %s', $content_type));
 }
