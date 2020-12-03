@@ -260,6 +260,7 @@ function redirect($location){
 }
 
 /**
+ * sets content type in the header
  * @param $content_type
  */
 function http_content_type($content_type){
@@ -267,6 +268,7 @@ function http_content_type($content_type){
 }
 
 /**
+ * Makes an associative array with username and password
  * @param $username
  * @param $password
  * @return array
@@ -279,6 +281,7 @@ function set_cred($username, $password){
 }
 
 /**
+ * checks credentials
  * @param $cred
  * @return bool
  */
